@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanilla Browser Agent Sandbox</title>
+    <link rel="stylesheet" href="/www/styles.css">
+</head>
+<body>
+
+    <div id="app">
+        <header>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color: #3b82f6;"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m9 10 2 2-2 2"/><path d="m13 14 2 0"/></svg>
+            Browser Agent Sandbox
+            <span class="status">Web Components</span>
+            <button id="sidebar-toggle">☰</button>
+        </header>
+
+        <conversation-sidebar></conversation-sidebar>
+        <div id="chat-container">
+            <!-- Messages will be injected here by app.js -->
+        </div>
+
+        <typing-indicator></typing-indicator>
+        <chat-input></chat-input>
+    </div>
+
+    <script type="module" src="/www/app.js"></script>
+</body>
+</html>
