@@ -1,6 +1,6 @@
 /**
  * <typing-indicator> Web Component
- * Spinner + "Agent is thinking..." text.
+ * iOS Messages-style three bouncing dots indicator.
  *
  * Attributes:
  *   active — boolean, toggles visibility
@@ -14,33 +14,42 @@ class TypingIndicator extends HTMLElement {
 		this.shadowRoot.innerHTML = `
 			<style>
 				:host { display: block; }
-				.typing-indicator {
+				.typing-row {
 					display: none;
-					padding: 12px 16px;
-					color: var(--system-text, #6b7280);
-					font-size: 0.9rem;
+					padding: 4px 16px 8px;
 					align-items: center;
-					gap: 8px;
-					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 				}
-				:host([active]) .typing-indicator {
+				:host([active]) .typing-row {
 					display: flex;
 				}
-				.spinner {
-					width: 16px;
-					height: 16px;
-					border: 2px solid var(--border-color, #e5e7eb);
-					border-top-color: var(--user-bubble, #3b82f6);
-					border-radius: 50%;
-					animation: spin 1s linear infinite;
+				.bubble {
+					background: #E9E9EB;
+					border-radius: 18px 18px 18px 4px;
+					padding: 10px 14px;
+					display: flex;
+					align-items: center;
+					gap: 5px;
 				}
-				@keyframes spin {
-					to { transform: rotate(360deg); }
+				.dot {
+					width: 8px;
+					height: 8px;
+					border-radius: 50%;
+					background: #8E8E93;
+					animation: bounce 0.6s ease-in-out infinite;
+				}
+				.dot:nth-child(2) { animation-delay: 0.15s; }
+				.dot:nth-child(3) { animation-delay: 0.3s; }
+				@keyframes bounce {
+					0%, 100% { transform: translateY(0); }
+					40% { transform: translateY(-6px); }
 				}
 			</style>
-			<div class="typing-indicator">
-				<div class="spinner"></div>
-				<span>Agent is thinking...</span>
+			<div class="typing-row">
+				<div class="bubble">
+					<div class="dot"></div>
+					<div class="dot"></div>
+					<div class="dot"></div>
+				</div>
 			</div>
 		`;
 	}

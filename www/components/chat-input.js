@@ -1,6 +1,7 @@
 /**
  * <chat-input> Web Component
- * Input field + send button. Dispatches a "send" CustomEvent with detail.text.
+ * Auto-growing textarea + iOS-style up-arrow send button.
+ * Dispatches a "send" CustomEvent with detail.text.
  *
  * Attributes / Properties:
  *   disabled — boolean, disables input and button during processing
@@ -15,64 +16,106 @@ class ChatInput extends HTMLElement {
 			<style>
 				:host { display: block; }
 				.input-container {
-					padding: 16px;
-					background-color: var(--chat-bg, #ffffff);
-					border-top: 1px solid var(--border-color, #e5e7eb);
+					padding: 8px 12px;
+					padding-bottom: max(8px, env(safe-area-inset-bottom));
+					background: rgba(255, 255, 255, 0.85);
+					backdrop-filter: blur(20px) saturate(180%);
+					-webkit-backdrop-filter: blur(20px) saturate(180%);
+					border-top: 0.5px solid rgba(60, 60, 67, 0.29);
 					display: flex;
-					gap: 12px;
+					gap: 8px;
+					align-items: flex-end;
 				}
-				input {
+				textarea {
 					flex: 1;
-					padding: 12px 16px;
-					border: 1px solid var(--border-color, #e5e7eb);
-					border-radius: 24px;
-					outline: none;
-					font-size: 1rem;
-					transition: border-color 0.2s;
-					font-family: inherit;
-				}
-				input:focus {
-					border-color: var(--user-bubble, #3b82f6);
-				}
-				button {
-					background-color: var(--user-bubble, #3b82f6);
-					color: white;
+					padding: 10px 14px;
 					border: none;
-					border-radius: 24px;
-					padding: 0 24px;
-					font-weight: 600;
+					border-radius: 20px;
+					outline: none;
+					font-size: 17px;
+					line-height: 1.4;
+					font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+					background: #F2F2F7;
+					color: #000000;
+					resize: none;
+					overflow-y: auto;
+					max-height: calc(5 * 1.4 * 17px + 20px);
+					min-height: 40px;
+					display: block;
+					-webkit-tap-highlight-color: transparent;
+				}
+				textarea::placeholder {
+					color: rgba(60, 60, 67, 0.4);
+				}
+				textarea:disabled {
+					opacity: 0.5;
+				}
+				.send-btn {
+					width: 44px;
+					height: 44px;
+					min-width: 44px;
+					border-radius: 50%;
+					border: none;
+					background-color: var(--user-bubble, #007AFF);
+					color: white;
 					cursor: pointer;
-					transition: background-color 0.2s;
 					display: flex;
 					align-items: center;
 					justify-content: center;
-					font-family: inherit;
+					flex-shrink: 0;
+					transition: background-color 0.15s, transform 0.1s;
+					-webkit-tap-highlight-color: transparent;
 				}
-				button:hover { background-color: #2563eb; }
-				button:disabled {
-					background-color: #93c5fd;
+				.send-btn:active {
+					transform: scale(0.92);
+				}
+				.send-btn:disabled {
+					background-color: #C7C7CC;
 					cursor: not-allowed;
+					transform: none;
 				}
 			</style>
 			<div class="input-container">
-				<input type="text" placeholder="Ask me for the weather, time, or location..." autocomplete="off" />
-				<button>Send</button>
+				<textarea
+					rows="1"
+					placeholder="Message"
+					autocomplete="off"
+					autocorrect="on"
+					autocapitalize="sentences"
+					inputmode="text"
+					enterkeyhint="send"
+				></textarea>
+				<button class="send-btn" aria-label="Send">
+					<svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+						<path d="M10 3L10 17M10 3L5 8M10 3L15 8" stroke="white" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+					</svg>
+				</button>
 			</div>
 		`;
 
-		this._input = this.shadowRoot.querySelector("input");
-		this._button = this.shadowRoot.querySelector("button");
+		this._textarea = this.shadowRoot.querySelector("textarea");
+		this._button = this.shadowRoot.querySelector(".send-btn");
 
 		this._button.addEventListener("click", () => this._send());
-		this._input.addEventListener("keypress", (e) => {
-			if (e.key === "Enter") this._send();
+		this._textarea.addEventListener("keypress", (e) => {
+			if (e.key === "Enter" && !e.shiftKey) {
+				e.preventDefault();
+				this._send();
+			}
 		});
+		this._textarea.addEventListener("input", () => this._autoGrow());
+	}
+
+	_autoGrow() {
+		const ta = this._textarea;
+		ta.style.height = "auto";
+		ta.style.height = ta.scrollHeight + "px";
 	}
 
 	attributeChangedCallback(name) {
 		if (name === "disabled") {
 			const disabled = this.hasAttribute("disabled");
-			this._input.disabled = disabled;
+			this._textarea.disabled = disabled;
 			this._button.disabled = disabled;
 		}
 	}
@@ -90,14 +133,15 @@ class ChatInput extends HTMLElement {
 	}
 
 	_send() {
-		const text = this._input.value.trim();
+		const text = this._textarea.value.trim();
 		if (!text || this.disabled) return;
-		this._input.value = "";
+		this._textarea.value = "";
+		this._textarea.style.height = "auto";
 		this.dispatchEvent(new CustomEvent("send", { detail: { text } }));
 	}
 
 	focus() {
-		this._input.focus();
+		this._textarea.focus();
 	}
 }
 

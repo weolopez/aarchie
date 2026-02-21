@@ -36,9 +36,9 @@ class ConversationSidebar extends HTMLElement {
 				.overlay {
 					position: absolute;
 					inset: 0;
-					background: rgba(0, 0, 0, 0.35);
+					background: rgba(0, 0, 0, 0.4);
 					opacity: 0;
-					transition: opacity 0.2s ease;
+					transition: opacity 0.25s ease;
 				}
 				:host([open]) .overlay {
 					opacity: 1;
@@ -48,117 +48,123 @@ class ConversationSidebar extends HTMLElement {
 					top: 0;
 					left: 0;
 					bottom: 0;
-					width: 220px;
+					width: 280px;
 					background: #ffffff;
-					border-right: 1px solid #e5e7eb;
+					border-right: 0.5px solid rgba(60, 60, 67, 0.29);
 					display: flex;
 					flex-direction: column;
 					transform: translateX(-100%);
-					transition: transform 0.2s ease;
+					transition: transform 0.25s ease;
 					overflow: hidden;
+					padding-top: env(safe-area-inset-top);
+					padding-bottom: env(safe-area-inset-bottom);
 				}
 				:host([open]) .panel {
 					transform: translateX(0);
 				}
 				.panel-header {
-					padding: 16px 12px 12px;
-					border-bottom: 1px solid #e5e7eb;
+					padding: 16px 16px 10px;
+					border-bottom: 0.5px solid rgba(60, 60, 67, 0.29);
+					font-size: 13px;
 					font-weight: 600;
-					font-size: 0.85rem;
-					color: #6b7280;
+					color: rgba(60, 60, 67, 0.6);
 					text-transform: uppercase;
-					letter-spacing: 0.05em;
-					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+					letter-spacing: 0.06em;
+					font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 				}
 				.new-chat-btn {
 					display: block;
 					width: calc(100% - 24px);
 					margin: 12px;
-					padding: 8px 12px;
-					border-radius: 8px;
-					border: 1px solid #e5e7eb;
-					background: #f3f4f6;
-					color: #111827;
-					font-size: 0.9rem;
-					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+					padding: 0 16px;
+					height: 44px;
+					border-radius: 22px;
+					border: none;
+					background: #007AFF;
+					color: #ffffff;
+					font-size: 17px;
+					font-weight: 600;
+					font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
 					cursor: pointer;
-					text-align: left;
+					text-align: center;
+					-webkit-tap-highlight-color: transparent;
+					transition: opacity 0.15s;
 				}
-				.new-chat-btn:hover {
-					background: #e5e7eb;
+				.new-chat-btn:active {
+					opacity: 0.75;
 				}
 				.convo-list {
 					flex: 1;
 					overflow-y: auto;
-					padding: 0 8px 8px;
+					-webkit-overflow-scrolling: touch;
+					padding: 4px 0 8px;
 				}
 				.convo-item {
 					display: flex;
 					align-items: center;
 					width: 100%;
-					padding: 8px 10px;
-					border-radius: 6px;
+					min-height: 44px;
+					padding: 12px 16px;
+					border-radius: 0;
 					border: none;
 					background: transparent;
 					text-align: left;
 					cursor: pointer;
-					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-					margin-bottom: 2px;
+					font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+					-webkit-tap-highlight-color: transparent;
 					box-sizing: border-box;
 				}
-				.convo-item:hover {
-					background: #f3f4f6;
+				.convo-item:active {
+					background: #F2F2F7;
 				}
 				.convo-item.active {
-					background: #dbeafe;
+					background: rgba(0, 122, 255, 0.1);
 				}
 				.convo-text {
 					flex: 1;
 					min-width: 0;
 				}
 				.convo-title {
-					font-size: 0.875rem;
-					color: #111827;
+					font-size: 15px;
+					color: #000000;
 					white-space: nowrap;
 					overflow: hidden;
 					text-overflow: ellipsis;
 				}
 				.convo-time {
-					font-size: 0.75rem;
-					color: #9ca3af;
+					font-size: 13px;
+					color: rgba(60, 60, 67, 0.6);
 					margin-top: 2px;
 				}
 				.delete-btn {
 					flex-shrink: 0;
-					margin-left: 6px;
-					width: 20px;
-					height: 20px;
-					border-radius: 4px;
+					margin-left: 8px;
+					width: 44px;
+					height: 44px;
+					border-radius: 50%;
 					border: none;
 					background: transparent;
-					color: #9ca3af;
-					font-size: 14px;
-					line-height: 1;
+					color: #8E8E93;
 					cursor: pointer;
 					display: flex;
 					align-items: center;
 					justify-content: center;
-					opacity: 0;
-					transition: opacity 0.1s, background 0.1s;
+					opacity: 0.4;
+					transition: opacity 0.15s, background 0.15s;
 					padding: 0;
+					-webkit-tap-highlight-color: transparent;
 				}
-				.convo-item:hover .delete-btn {
+				.delete-btn:active,
+				.delete-btn:focus {
 					opacity: 1;
-				}
-				.delete-btn:hover {
-					background: #fee2e2;
-					color: #ef4444;
+					background: rgba(255, 59, 48, 0.1);
+					color: #FF3B30;
 				}
 			</style>
 			<div class="overlay"></div>
 			<div class="panel">
 				<div class="panel-header">Conversations</div>
-				<button class="new-chat-btn">+ New Chat</button>
+				<button class="new-chat-btn">New Chat</button>
 				<div class="convo-list"></div>
 			</div>
 		`;
@@ -226,7 +232,7 @@ class ConversationSidebar extends HTMLElement {
 			const del = document.createElement("button");
 			del.className = "delete-btn";
 			del.title = "Delete conversation";
-			del.textContent = "✕";
+			del.innerHTML = `<svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M2 4h12M5 4V2h6v2M6 7v5M10 7v5M3 4l1 9h8l1-9" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
 			del.addEventListener("click", (e) => {
 				e.stopPropagation();
 				this.dispatchEvent(new CustomEvent("delete", { bubbles: true, detail: { id: convo.id } }));

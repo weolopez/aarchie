@@ -220,10 +220,12 @@ function renderSavedMessages(messages) {
 
 		if (msg.role === "assistant") {
 			const text = msg.content?.filter((c) => c.type === "text").map((c) => c.text).join("") || "";
+			const hasToolCalls = msg.content?.some((c) => c.type === "toolCall");
 			if (text.trim()) {
 				const el = document.createElement("chat-message");
 				el.setAttribute("role", "assistant");
 				el.setAttribute("content", text);
+				if (hasToolCalls) el.setAttribute("variant", "thinking");
 				chatContainer.appendChild(el);
 			}
 			const toolCalls = msg.content?.filter((c) => c.type === "toolCall") || [];
@@ -291,10 +293,12 @@ agent.subscribe((event) => {
 
 			if (msg.role === "assistant" && event.type === "message_end") {
 				const text = (msg.content?.filter((c) => c.type === "text") || []).map((c) => c.text).join("");
+				const hasToolCalls = msg.content?.some((c) => c.type === "toolCall");
 				if (text.trim()) {
 					const el = document.createElement("chat-message");
 					el.setAttribute("role", "assistant");
 					el.setAttribute("content", text);
+					if (hasToolCalls) el.setAttribute("variant", "thinking");
 					chatContainer.appendChild(el);
 					scrollToBottom();
 				}

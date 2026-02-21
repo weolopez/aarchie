@@ -1,13 +1,13 @@
 /**
  * <chat-message> Web Component
- * Renders user/assistant chat bubbles with markdown support.
+ * Renders user/assistant chat bubbles with iOS Messages styling.
  *
  * Attributes:
  *   role    — "user" | "assistant"
  *   content — raw text (markdown parsed for display)
  */
 class ChatMessage extends HTMLElement {
-	static observedAttributes = ["role", "content"];
+	static observedAttributes = ["role", "content", "variant"];
 
 	constructor() {
 		super();
@@ -25,6 +25,7 @@ class ChatMessage extends HTMLElement {
 	render() {
 		const role = this.getAttribute("role") || "assistant";
 		const content = this.getAttribute("content") || "";
+		const isThinking = this.getAttribute("variant") === "thinking";
 
 		this.shadowRoot.innerHTML = `
 			<style>
@@ -35,23 +36,29 @@ class ChatMessage extends HTMLElement {
 				}
 				.message-row.user { justify-content: flex-end; }
 				.bubble {
-					max-width: 80%;
-					padding: 12px 16px;
-					border-radius: 12px;
-					line-height: 1.5;
+					max-width: 75%;
+					padding: 10px 14px;
+					line-height: 1.4;
 					word-wrap: break-word;
-					font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-					font-size: 1rem;
+					font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+					font-size: 17px;
 				}
 				.user .bubble {
-					background-color: var(--user-bubble, #3b82f6);
+					background-color: var(--user-bubble, #007AFF);
 					color: var(--user-text, #ffffff);
-					border-bottom-right-radius: 4px;
+					border-radius: 18px 18px 4px 18px;
 				}
 				.assistant .bubble {
-					background-color: var(--assistant-bubble, #f3f4f6);
-					color: var(--assistant-text, #1f2937);
-					border-bottom-left-radius: 4px;
+					background-color: var(--assistant-bubble, #E9E9EB);
+					color: var(--assistant-text, #000000);
+					border-radius: 18px 18px 18px 4px;
+				}
+				.assistant.thinking .bubble {
+					background-color: #F2F2F7;
+					color: rgba(60, 60, 67, 0.6);
+					border-radius: 12px;
+					font-style: italic;
+					font-size: 15px;
 				}
 				.bubble p { margin-bottom: 8px; }
 				.bubble p:last-child { margin-bottom: 0; }
@@ -60,8 +67,8 @@ class ChatMessage extends HTMLElement {
 					background-color: rgba(0,0,0,0.1);
 					padding: 2px 4px;
 					border-radius: 4px;
-					font-family: monospace;
-					font-size: 0.9em;
+					font-family: "SF Mono", "Courier New", Courier, monospace;
+					font-size: 15px;
 				}
 				.user .bubble code { background-color: rgba(255,255,255,0.2); }
 				.bubble pre {
@@ -71,17 +78,18 @@ class ChatMessage extends HTMLElement {
 					border-radius: 8px;
 					overflow-x: auto;
 					margin: 8px 0;
-					font-family: monospace;
-					font-size: 0.9em;
+					font-family: "SF Mono", "Courier New", Courier, monospace;
+					font-size: 13px;
 				}
 				.bubble pre code {
 					background-color: transparent;
 					padding: 0;
 					color: inherit;
+					font-size: 13px;
 				}
 			</style>
-			<div class="message-row ${role}">
-				<div class="bubble">${ChatMessage.parseMarkdown(content)}</div>
+			<div class="message-row ${role}${isThinking ? " thinking" : ""}">
+				<div class="bubble">${isThinking ? "💭 " : ""}${ChatMessage.parseMarkdown(content)}</div>
 			</div>
 		`;
 	}
