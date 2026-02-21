@@ -21,8 +21,15 @@
                 </svg>
             </button>
             <span class="header-title">Aarchie</span>
+            <button id="settings-toggle" aria-label="Settings">
+                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+                    <circle cx="10" cy="10" r="2.5" stroke="currentColor" stroke-width="1.6"/>
+                    <path d="M10 2v1.5M10 16.5V18M2 10h1.5M16.5 10H18M4.1 4.1l1.06 1.06M14.84 14.84l1.06 1.06M4.1 15.9l1.06-1.06M14.84 5.16l1.06-1.06" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                </svg>
+            </button>
         </header>
 
+        <api-key-setup id="api-key-setup"></api-key-setup>
         <conversation-sidebar></conversation-sidebar>
         <div id="chat-container">
             <!-- Messages will be injected here by app.js -->

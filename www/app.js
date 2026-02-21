@@ -11,6 +11,7 @@ import "/www/components/chat-input.js";
 import "/www/components/tool-terminal.js";
 import "/www/components/typing-indicator.js";
 import "/www/components/conversation-sidebar.js";
+import "/www/components/api-key-setup.js";
 
 // ============================================================================
 // WebSocket Connection for Conversation Capture
@@ -73,6 +74,7 @@ let conversationId = crypto.randomUUID();
 // ============================================================================
 
 const agent = createAgent({
+	getApiKey: () => localStorage.getItem("GEMINI_API_KEY"),
 	convertToLlm(messages) {
 		const llmMessages = convertToLlm(messages);
 		wsSend({
@@ -362,6 +364,10 @@ if (index.length > 0) {
 	startNewConversation();
 }
 
+if (!localStorage.getItem("GEMINI_API_KEY")) {
+	showSetup(false);
+}
+
 sidebar.conversations = getIndex();
 sidebar.addEventListener("select", (e) => loadConversation(e.detail.id));
 sidebar.addEventListener("delete", (e) => deleteConversation(e.detail.id));
@@ -369,4 +375,35 @@ sidebar.addEventListener("new-chat", () => startNewConversation());
 sidebar.addEventListener("close", () => { sidebar.open = false; });
 document.getElementById("sidebar-toggle").addEventListener("click", () => {
 	sidebar.open = !sidebar.open;
+});
+
+// ============================================================================
+// API Key Setup
+// ============================================================================
+
+const apiKeySetup = document.getElementById("api-key-setup");
+
+function showSetup(dismissible = false) {
+	if (dismissible) {
+		apiKeySetup.setAttribute("dismissible", "");
+	} else {
+		apiKeySetup.removeAttribute("dismissible");
+	}
+	apiKeySetup.open = true;
+}
+
+function hideSetup() {
+	apiKeySetup.open = false;
+}
+
+apiKeySetup.addEventListener("key-saved", () => {
+	hideSetup();
+});
+
+apiKeySetup.addEventListener("dismiss", () => {
+	hideSetup();
+});
+
+document.getElementById("settings-toggle").addEventListener("click", () => {
+	showSetup(true);
 });

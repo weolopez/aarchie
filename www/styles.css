@@ -96,6 +96,26 @@ header {
     background: rgba(0, 122, 255, 0.1);
 }
 
+#settings-toggle {
+    position: absolute;
+    right: 16px;
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    color: var(--user-bubble);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+}
+
+#settings-toggle:active {
+    background: rgba(0, 122, 255, 0.1);
+}
+
 #chat-container {
     flex: 1;
     overflow-y: auto;
