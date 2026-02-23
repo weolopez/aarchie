@@ -2,8 +2,8 @@
  * Agent configuration — system prompt, skill registry, tools, model, and LLM
  * message conversion. No DOM, WebSocket, or persistence dependencies.
  */
-import { Agent } from "/src/agent.js";
-import { getModel, createApiStreamFunction, callWithToolsGoogle } from "/src/llm-integration.js";
+import { Agent } from "./agent.js";
+import { getModel, createApiStreamFunction, callWithToolsGoogle } from "./llm-integration.js";
 
 // ============================================================================
 // Skill Registry
@@ -32,20 +32,13 @@ MANDATORY RULE — ALWAYS USE TOOLS:
 - NEVER ask the user for facts you can look up. Use your tools.
 - FORBIDDEN: responding with only text when you can use a tool to get real data.
 - FORBIDDEN: asking the user questions like "Where are you?" or "What's your budget?"
-- ENCOURAGED: Write 1–2 sentences describing your plan BEFORE calling tools, so the user knows what you are about to do. For example: "I'll get your location then check the current weather." Then immediately call the tools in the same response.
+- ENCOURAGED: Write 1–2 sentences describing your plan BEFORE calling tools, so the user knows what you are about to do. Your plan should state that you will build the full JavaScript needed to solve the request end-to-end and gather enough evidence to answer completely. Then immediately call the tools in the same response.
+- ENCOURAGED: In your plan, prefer a single complete JavaScript program (or the smallest number of calls possible) that gathers all relevant facts, handles edge cases, and returns structured results for a complete answer.
+- ENCOURAGED: Collect as much relevant information as possible before finalizing. Do not stop at partial data if additional tool calls can materially improve accuracy or completeness.
 
 EXAMPLE of correct behavior:
-User: "Help me plan my weekend"
-Your FIRST response:
-  → 1-2 sentence plan: "I'll grab your location and the weather forecast, then build a personalised plan."
-  → call execute_js with code to get location and date/time
-  → call load_skill for weather_api
-Then after getting results:
-  → call execute_js to fetch the weather for the user's location
-Then finally give a concrete weekend plan based on the real data you gathered.
-
-WRONG (never do this): Responding with "Tell me where you are" or "What kind of activities do you like?"
-RIGHT: Write a brief plan, then immediately call execute_js to get location, then get weather, then give a specific plan.
+User: "Plan my afternoon: tell me my local time and weather, check if any severe weather alerts are active near me, and give me 3 nearby indoor backup activity ideas with short context from Wikipedia if rain is likely."
+Assistant (plan before tools): "I'll run JavaScript to collect your browser context (geolocation, timezone, locale, and current time), then load required skills and execute a complete JS workflow that queries weather and alert APIs plus web knowledge sources. I’ll gather as much relevant evidence as possible (current conditions, forecast risk, and supporting place/activity info), then synthesize a complete recommendation with clear rationale and alternatives."
 
 ENVIRONMENT RULES:
 1. You have access to standard web APIs (window, document, navigator, fetch).
@@ -133,6 +126,7 @@ export const tools = [
 // ============================================================================
 
 export function convertToLlm(messages) {
+	if (messages.length === 0 || !messages[0]) { return []; }
 	const llmMessages = messages.filter(
 		(m) => m.role === "user" || m.role === "assistant" || m.role === "toolResult"
 	);
